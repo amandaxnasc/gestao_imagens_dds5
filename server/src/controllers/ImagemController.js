@@ -1,6 +1,6 @@
-import path, { dirname } from 'path';
+import path from 'path';
 import url from 'url';
-import { createImagem, deleteImagem, readImagem, updateImagem } from '../models/ImagemModel.js';
+import { createImagem, deleteImagem, readImagem, updateImagem, showOneImagem } from '../models/ImagemModel.js';
 
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -58,7 +58,7 @@ export async function editarImagem(req,res) {
 export async function apagarImagem(req,res) {
     console.log('ImagemController :: Apagando uma Imagem');    
     const {id_imagem} = req.params;
-    
+
     try {
         const [status,reposta] = await deleteImagem(id_imagem);
         res.status(status).json(reposta);
@@ -80,4 +80,18 @@ export async function mostrarImagem(req, res) {
             res.status(404).json({ mesage: 'Imagem não encontrada' })
         }
     });
+}
+
+export async function mostrarUmaImagem(req, res) {
+    console.log('ImagemController : : Mostrando Uma Imagen');
+
+    const { id_imagem } = req.params;
+
+    try {
+        const [status, resposta] = await showOneImagem(id_imagem);
+        res.status(status).json(resposta);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json(error);
+    }
 }

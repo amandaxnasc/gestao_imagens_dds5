@@ -56,11 +56,10 @@ export async function updateImagem(descricao,id_imagem) {
         return[500,error];
     }
 }
-
 export async function deleteImagem(id_imagem) {
     const conexao = mysql.createPool(db);
     console.log('ImagemModel :: updateImagem');
-    const sql = 'DELETE FROM imagens WHERE id_imagem=?';
+    const sql = 'DELETE * FROM imagens WHERE id_imagem=?';
     const params = [id_imagem];
 
     try {
@@ -72,5 +71,22 @@ export async function deleteImagem(id_imagem) {
     } catch (error) {
         console.log(error);
         return[500,error];
+    }
+}
+
+export async function showOneImagem(id_imagem) {
+    const conexao = mysql.createPool(db);
+
+    console.log('Mostrando uma imagem no Model Imagem');
+    const sql = 'SELECT * FROM  imagens WHERE id_imagem =?';
+    const params = [id_imagem];
+
+    try {
+        const [retorno] = await conexao.query(sql, params);
+        console.log('Mostrando uma imagem');
+        return [200, retorno[0]];
+    } catch (error) {
+        console.log(error);
+        return [500, error];
     }
 }
