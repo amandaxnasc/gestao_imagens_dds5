@@ -29,55 +29,59 @@ export async function readImagem() {
     const sql = 'SELECT * FROM imagens';
 
     try {
-        const[retorno] = await conexao.query(sql);
-        return[200,retorno]
+        const [retorno] = await conexao.query(sql);
+        return [200, retorno]
     } catch (error) {
         console.log(error);
-        return[500,error];
+        return [500, error];
     }
 }
 
-export async function updateImagem(descricao,id_imagem) {
+export async function updateImagem(descricao, id_imagem) {
     const conexao = mysql.createPool(db);
 
     console.log('ImagemModel :: updateImagem');
     const sql = 'UPDATE imagens SET descricao=? WHERE id_imagem=?';
 
-    const params = [descricao,id_imagem];
+    const params = [descricao, id_imagem];
 
     try {
-        const [retorno] = await conexao.query(sql,params);
-        if(retorno.affectedRows < 1){
-            return [404,{message:'Imagem não encontrada'}]
+        const [retorno] = await conexao.query(sql, params);
+        if (retorno.affectedRows < 1) {
+            return [404, { message: 'Imagem não encontrada' }]
         }
-        return [200, {message:'Imagem ataulizada'}];
+        return [200, { message: 'Imagem ataulizada' }];
     } catch (error) {
         console.log(error);
-        return[500,error];
+        return [500, error];
     }
 }
 export async function deleteImagem(id_imagem) {
+    console.log('ImagemModel :: deleteImagem');
     const conexao = mysql.createPool(db);
-    console.log('ImagemModel :: updateImagem');
+    const sqlImagem = 'SELECT * FROM imagens WHERE id_imagem=?'
     const sql = 'DELETE * FROM imagens WHERE id_imagem=?';
     const params = [id_imagem];
 
     try {
-        const [retorno] = await conexao.query(sql,params);
-        if(retorno.affectedRows < 1){
-            return [404,{message:'Imagem não deletada'}]
-        }
-        return [200, {message:'Imagem deletada'}];
+        const [imagem] = await conexao.query(sqlImagem, params);
+        if (imagem.lenght > 0) {
+            const nomeImg = retorno[0].caminho;
+            await conexao.query(sql,params);
+            await fs.unlink(__dirname, '..', '..', 'public', 'img', nomeImg);
+            return [200, { message: 'Imagem deletada' }];
+        } else {
+            return [404, { message: 'Imagem não deletada' }]
+        }        
     } catch (error) {
         console.log(error);
-        return[500,error];
+        return [500, error];
     }
 }
 
 export async function showOneImagem(id_imagem) {
+    console.log('ImagemModel :: showOneImagem')
     const conexao = mysql.createPool(db);
-
-    console.log('Mostrando uma imagem no Model Imagem');
     const sql = 'SELECT * FROM  imagens WHERE id_imagem =?';
     const params = [id_imagem];
 
