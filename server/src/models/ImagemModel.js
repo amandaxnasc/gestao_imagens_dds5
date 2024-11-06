@@ -60,15 +60,15 @@ export async function deleteImagem(id_imagem) {
     console.log('ImagemModel :: deleteImagem');
     const conexao = mysql.createPool(db);
     const sqlImagem = 'SELECT * FROM imagens WHERE id_imagem=?'
-    const sql = 'DELETE * FROM imagens WHERE id_imagem=?';
+    const sql = 'DELETE FROM imagens WHERE id_imagem=?';
     const params = [id_imagem];
 
     try {
         const [imagem] = await conexao.query(sqlImagem, params);
-        if (imagem.lenght > 0) {
-            const nomeImg = retorno[0].caminho;
+        if (imagem.length > 0) {
+            const nomeImg = imagem[0].caminho;
             await conexao.query(sql,params);
-            await fs.unlink(__dirname, '..', '..', 'public', 'img', nomeImg);
+            await fs.unlink(path.join(__dirname, '..', '..', 'public', 'img', nomeImg));
             return [200, { message: 'Imagem deletada' }];
         } else {
             return [404, { message: 'Imagem não deletada' }]
